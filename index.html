@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap the Falling Hearts ❤️</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f9c5d1, #ffd6e0);
+    text-align: center;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 1px 1px 3px #aa5a6d;
+  }
+  .heart {
+    position: absolute;
+    font-size: 60px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s;
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop autoplay>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<div id="score">Score: 0</div>
+
+<script>
+let score = 0;
+const scoreDisplay = document.getElementById('score');
+const bgMusic = document.getElementById('bgMusic');
+
+function createHeart(){
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '❤️';
+  heart.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+  heart.style.top = '-60px';
+  document.body.appendChild(heart);
+
+  let top = -60;
+  const speed = 1 + Math.random()*2 + score*0.1; // slightly faster over time
+
+  function fall(){
+    top += speed;
+    heart.style.top = top + 'px';
+    if(top > window.innerHeight){
+      heart.remove();
+    } else {
+      requestAnimationFrame(fall);
+    }
+  }
+  fall();
+
+  heart.addEventListener('click', () => {
+    score++;
+    scoreDisplay.textContent = `Score: ${score}`;
+    heart.style.transform = 'scale(1.5) rotate(20deg)';
+    setTimeout(() => heart.remove(), 200);
+
+    // Add tiny bounce effect
+    const bounce = document.createElement('div');
+    bounce.textContent = '💖';
+    bounce.style.position = 'absolute';
+    bounce.style.left = heart.style.left;
+    bounce.style.top = heart.style.top;
+    bounce.style.fontSize = '30px';
+    bounce.style.transition = 'all 0.5s ease-out';
+    document.body.appendChild(bounce);
+    setTimeout(() => {
+      bounce.style.top = parseInt(bounce.style.top)-50 + 'px';
+      bounce.style.opacity = 0;
+    }, 10);
+    setTimeout(() => bounce.remove(), 600);
+
+    if(score === 10){ // game ends at 10 points
+      const endMessage = document.createElement('div');
+      endMessage.textContent = '🎉 You caught all hearts! I LOVE YOU ❤️';
+      endMessage.style.position = 'absolute';
+      endMessage.style.top = '40%';
+      endMessage.style.width = '100%';
+      endMessage.style.fontSize = '28px';
+      endMessage.style.color = '#fff';
+      endMessage.style.textShadow = '1px 1px 5px #aa5a6d';
+      document.body.appendChild(endMessage);
+    }
+  });
+}
+
+// Start creating hearts every 0.8 seconds
+setInterval(createHeart, 800);
+</script>
+
+</body>
+</html>
